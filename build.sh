@@ -27,7 +27,7 @@ go mod tidy
 
 govulncheck ./...
 
-#deadcode ./cmd/*
+deadcode ./cmd/*
 
 go env -w CGO_ENABLED=1
 

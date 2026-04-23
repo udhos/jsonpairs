@@ -216,12 +216,13 @@ func (it *Iterator) Type() ValueType {
 // ValueType represents the inferred type of a JSON value.
 type ValueType int
 
+// ValueType constants for common JSON value types.
 const (
-	TypeString ValueType = iota
-	TypeNumber
-	TypeBool
-	TypeNull
-	TypeUnknown
+	TypeString  ValueType = iota // TypeString is a JSON string (enclosed in quotes)
+	TypeNumber                   // TypeNumber is a JSON number
+	TypeBool                     // TypeBool is a JSON boolean (true or false)
+	TypeNull                     // TypeNull is a JSON null
+	TypeUnknown                  // TypeUnknown is an unknown or unsupported JSON value type
 )
 
 // GetValueType inspects the first byte of a value slice to hint at its type.
