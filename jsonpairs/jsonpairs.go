@@ -57,6 +57,52 @@ func (it *Iterator) skipValue() {
 	}
 }
 
+func (it *Iterator) skipCompositeValue() bool {
+	if it.pos >= len(it.data) {
+		return false
+	}
+
+	var open byte
+	var close byte
+	switch it.data[it.pos] {
+	case '{':
+		open = '{'
+		close = '}'
+	case '[':
+		open = '['
+		close = ']'
+	default:
+		return false
+	}
+
+	depth := 0
+	for it.pos < len(it.data) {
+		switch it.data[it.pos] {
+		case '"':
+			it.skipString()
+		case open:
+			depth++
+			it.pos++
+		case close:
+			depth--
+			it.pos++
+			if depth == 0 {
+				return true
+			}
+		case '{', '[':
+			depth++
+			it.pos++
+		case '}', ']':
+			depth--
+			it.pos++
+		default:
+			it.pos++
+		}
+	}
+
+	return false
+}
+
 func (it *Iterator) parsePair() bool {
 	// 1. Capture the key, but skip the opening quote
 	it.pos++ // Skip opening quote
@@ -78,6 +124,7 @@ func (it *Iterator) parsePair() bool {
 	if it.pos < len(it.data) {
 		switch it.data[it.pos] {
 		case '{', '[':
+			it.skipCompositeValue()
 			return false
 		}
 	}
