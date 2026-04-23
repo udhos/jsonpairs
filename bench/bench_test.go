@@ -17,13 +17,13 @@ goos: linux
 goarch: amd64
 pkg: github.com/udhos/jsonpairs/bench
 cpu: 13th Gen Intel(R) Core(TM) i7-1360P
-BenchmarkFastJSON-16          	 2220780	       533.0 ns/op	       0 B/op	       0 allocs/op
-BenchmarkSonnetJSON-16        	  531517	      3084 ns/op	    1856 B/op	      45 allocs/op
-BenchmarkStandardJSON-16      	  220342	      5382 ns/op	    1673 B/op	      47 allocs/op
-BenchmarkStandardJSONv2-16    	  439308	      3358 ns/op	    1569 B/op	      30 allocs/op
-BenchmarkJsonPairs-16         	 2361280	       498.2 ns/op	       0 B/op	       0 allocs/op
+BenchmarkFastJSON-16          	 2215423	       535.4 ns/op	       0 B/op	       0 allocs/op
+BenchmarkSonnetJSON-16        	  519086	      3053 ns/op	    1856 B/op	      45 allocs/op
+BenchmarkStandardJSON-16      	  228650	      5291 ns/op	    1673 B/op	      47 allocs/op
+BenchmarkStandardJSONv2-16    	  358464	      3338 ns/op	    1569 B/op	      30 allocs/op
+BenchmarkJsonPairs-16         	 2423125	       490.7 ns/op	       0 B/op	       0 allocs/op
 PASS
-ok  	github.com/udhos/jsonpairs/bench	6.667s
+ok  	github.com/udhos/jsonpairs/bench	6.375s
 */
 
 const jsonSample = `

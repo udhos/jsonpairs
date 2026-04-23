@@ -194,3 +194,40 @@ func (it *Iterator) Key() []byte { return it.currKey }
 
 // Value returns the current value.
 func (it *Iterator) Value() []byte { return it.currValue }
+
+// Type returns the ValueType of the current key-value pair.
+func (it *Iterator) Type() ValueType {
+	return GetValueType(it.currValue)
+}
+
+// ValueType represents the inferred type of a JSON value.
+type ValueType int
+
+const (
+	TypeString ValueType = iota
+	TypeNumber
+	TypeBool
+	TypeNull
+	TypeUnknown
+)
+
+// GetValueType inspects the first byte of a value slice to hint at its type.
+// It does not parse the value or perform any allocations.
+func GetValueType(b []byte) ValueType {
+	if len(b) == 0 {
+		return TypeUnknown
+	}
+	switch b[0] {
+	case '"':
+		return TypeString
+	case 't', 'f':
+		return TypeBool
+	case 'n':
+		return TypeNull
+	case '-', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9':
+		return TypeNumber
+	default:
+		// Everything else (like '.') is invalid in strict JSON
+		return TypeUnknown
+	}
+}
