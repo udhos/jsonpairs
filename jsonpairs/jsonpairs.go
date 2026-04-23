@@ -35,12 +35,13 @@ func (it *Iterator) skipWhitespace() {
 func (it *Iterator) skipString() {
 	it.pos++ // Skip the opening quote
 	for it.pos < len(it.data) {
-		if it.data[it.pos] == '\\' {
+		switch it.data[it.pos] {
+		case '\\':
 			it.pos += 2 // Skip escaped character
-		} else if it.data[it.pos] == '"' {
+		case '"':
 			it.pos++ // Skip the closing quote
 			return
-		} else {
+		default:
 			it.pos++
 		}
 	}
@@ -63,14 +64,14 @@ func (it *Iterator) skipCompositeValue() bool {
 	}
 
 	var open byte
-	var close byte
+	var closeMarker byte
 	switch it.data[it.pos] {
 	case '{':
 		open = '{'
-		close = '}'
+		closeMarker = '}'
 	case '[':
 		open = '['
-		close = ']'
+		closeMarker = ']'
 	default:
 		return false
 	}
@@ -83,7 +84,7 @@ func (it *Iterator) skipCompositeValue() bool {
 		case open:
 			depth++
 			it.pos++
-		case close:
+		case closeMarker:
 			depth--
 			it.pos++
 			if depth == 0 {
