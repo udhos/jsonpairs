@@ -33,18 +33,22 @@ func (it *Iterator) skipWhitespace() {
 }
 
 func (it *Iterator) skipString() {
-	it.pos++ // Skip the opening quote
-	for it.pos < len(it.data) {
-		switch it.data[it.pos] {
+	pos := it.pos
+	pos++ // Skip the opening quote
+	size := len(it.data)
+LOOP:
+	for pos < size {
+		switch it.data[pos] {
 		case '\\':
-			it.pos += 2 // Skip escaped character
+			pos += 2 // Skip escaped character
 		case '"':
-			it.pos++ // Skip the closing quote
-			return
+			pos++ // Skip the closing quote
+			break LOOP
 		default:
-			it.pos++
+			pos++
 		}
 	}
+	it.pos = pos
 }
 
 func (it *Iterator) skipValue() {
