@@ -157,3 +157,41 @@ func TestGetValueType(t *testing.T) {
 		})
 	}
 }
+
+func TestMaliciousEscaping(t *testing.T) {
+	tests := []struct {
+		name  string
+		input string
+		want  string // expected key value
+	}{
+		{
+			name:  "EscapedQuoteInString",
+			input: `{"key": "value with \" quote"}`,
+			want:  `"value with \" quote"`,
+		},
+		{
+			name:  "EscapedBackslash",
+			input: `{"key": "value with \\ backslash"}`,
+			want:  `"value with \\ backslash"`,
+		},
+		{
+			name:  "MalformedEscaping",
+			input: `{"key": "value with \{ brace inside"}`,
+			want:  `"value with \{ brace inside"`,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			it := NewIterator([]byte(tt.input))
+			if it.Next() {
+				val := string(it.Value())
+				if val != tt.want {
+					t.Errorf("got %q, want %q", val, tt.want)
+				}
+			} else {
+				t.Error("expected pair, got none")
+			}
+		})
+	}
+}

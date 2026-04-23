@@ -63,13 +63,16 @@ func (it *Iterator) skipValue() {
 }
 
 func (it *Iterator) skipCompositeValue() bool {
-	if it.pos >= len(it.data) {
+	pos := it.pos
+	size := len(it.data)
+
+	if pos >= size {
 		return false
 	}
 
 	var open byte
 	var closeMarker byte
-	switch it.data[it.pos] {
+	switch it.data[pos] {
 	case '{':
 		open = '{'
 		closeMarker = '}'
@@ -81,29 +84,34 @@ func (it *Iterator) skipCompositeValue() bool {
 	}
 
 	depth := 0
-	for it.pos < len(it.data) {
-		switch it.data[it.pos] {
+	for pos < size {
+		switch it.data[pos] {
 		case '"':
+			it.pos = pos
 			it.skipString()
+			pos = it.pos
 		case open:
 			depth++
-			it.pos++
+			pos++
 		case closeMarker:
 			depth--
-			it.pos++
+			pos++
 			if depth == 0 {
+				it.pos = pos
 				return true
 			}
 		case '{', '[':
 			depth++
-			it.pos++
+			pos++
 		case '}', ']':
 			depth--
-			it.pos++
+			pos++
 		default:
-			it.pos++
+			pos++
 		}
 	}
+
+	it.pos = pos
 
 	return false
 }
@@ -131,6 +139,11 @@ func (it *Iterator) parsePair() bool {
 		case '{', '[':
 			it.skipCompositeValue()
 			return false
+		case '"':
+			startVal := it.pos
+			it.skipString()
+			it.currValue = it.data[startVal:it.pos]
+			return true
 		}
 	}
 	startVal := it.pos
